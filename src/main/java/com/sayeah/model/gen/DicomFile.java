@@ -1,6 +1,5 @@
-package com.sayeah.model;
+package com.sayeah.model.gen;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,19 +12,27 @@ import java.util.Date;
 @Setter
 @Getter
 @ToString
-
 public class DicomFile {
 
     private int id;
     private int userId;
+    private int studyFileId;
+
     private String dicomName;
+    private String mappigName;
+    private long fileSize;
+
+
+    private String patientUid;
+    private String studyUid;
+    private String seriesUid;
+    private String sopUid;
+
     private Date studyDate;
     private String modality;
     private int bigFileId;
-    private long fileSize;
-    private String sopUid;
-    private String seriesUid;
-    private String studyUid;
-    private String patientUid;
+
     private Date createdDate;
+
+    private int ishdfs;
 }

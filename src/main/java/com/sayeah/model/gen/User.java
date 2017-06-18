@@ -1,4 +1,4 @@
-package com.sayeah.model;
+package com.sayeah.model.gen;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,6 @@ import lombok.ToString;
 @Getter
 @ToString
 public class User {
-
     private int id;
     private String username;
     private String password;

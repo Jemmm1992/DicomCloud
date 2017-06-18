@@ -1,6 +1,6 @@
 package com.sayeah.dao;
 
-import com.sayeah.model.DicomFile;
+import com.sayeah.model.gen.DicomFile;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -16,14 +16,14 @@ import java.util.List;
 public interface DicomFileDAO {
 
     String TABLE_NAME = "dicomfile";
-    String INSET_FIELDS = " user_id, dicom_name, study_date, modality, bigfile_id, file_size, sop_uid, series_uid, study_uid, patient_uid, created_date ";
-    String SELECT_FIELDS = " id, user_id, dicom_name, study_date, modality, bigfile_id, file_size, sop_uid, series_uid, study_uid, patient_uid, created_date ";
+    String INSET_FIELDS = " user_id, studyfile_id, dicom_name, file_size, sop_uid, series_uid, created_date, ishdfs";
+    String SELECT_FIELDS = " id, " + INSET_FIELDS;
 
-    String SELECT_FIELDS2 = "user_id, dicom_name, study_date, modality, bigfile_id, study_uid ";
+//    String SELECT_FIELDS2 = "user_id, dicom_name, study_date, modality, bigfile_id, study_uid ";
 
 
     @Insert({"insert into ", TABLE_NAME, "(", INSET_FIELDS,
-            ") values (#{userId},#{dicomName},#{studyDate},#{modality},#{bigFileId},#{fileSize},#{sopUid},#{seriesUid},#{studyUid},#{patientUid},#{createdDate})"})
+            ") values (#{userId},#{studyFileId},#{dicomName},#{fileSize},#{sopUid},#{seriesUid},#{createdDate},#{ishdfs})"})
     int addDicomFile(DicomFile dicomFile);
 
 
@@ -39,8 +39,8 @@ public interface DicomFileDAO {
     List<DicomFile> selectByStudyUid(String dicomName);
 
 
-    //根据小文件的名称(diocm_name）得到对应的大文件地址(study_date,modality,bigfile_id,study_uid)
-    @Select({"select ", SELECT_FIELDS2, " from ", TABLE_NAME, " where dicom_name=#{dicomName}"})
-    DicomFile selectByName2(String dicomName);
+//    //根据小文件的名称(diocm_name）得到对应的大文件地址(study_date,modality,bigfile_id,study_uid)
+//    @Select({"select ", SELECT_FIELDS2, " from ", TABLE_NAME, " where dicom_name=#{dicomName}"})
+//    DicomFile selectByName2(String dicomName);
 
 }

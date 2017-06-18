@@ -1,11 +1,15 @@
 package com.sayeah.utils;
 
-import com.sayeah.model.common.SOPInstanceModel;
+import com.sayeah.model.gen.DicomFile;
+import com.sayeah.service.function.DicomFunction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -19,13 +23,27 @@ public class DicomUtilsTest {
 
     @Test
     public void testReadDcmFile() {
-        SOPInstanceModel sopInstanceModel = DicomUtils.getSopInstanceModel(DICOMFILE_PATH);
+        DicomFile sopInstanceModel = DicomFunction.getDicomFile(DICOMFILE_PATH);
+        System.out.println(sopInstanceModel.toString());
+    }
+
+    @Test
+    public void testReadDcmFileInputStream() {
+        File file = new File(DICOMFILE_PATH);
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        DicomFile sopInstanceModel = DicomFunction.getDicomFile(fileInputStream, file.getName(), file.length());
         System.out.println(sopInstanceModel.toString());
     }
 
     @Test
     public void testTraversalStudy() {
-        List<SOPInstanceModel> sopInstanceModels = DicomUtils.TraversalStudy(STUDY_PATH);
+        List<DicomFile> sopInstanceModels = DicomFunction.TraversalStudy(STUDY_PATH);
         System.out.println(sopInstanceModels.size());
     }
 }

@@ -2,7 +2,7 @@ package com.sayeah;
 
 
 import com.sayeah.dao.UserDAO;
-import com.sayeah.model.User;
+import com.sayeah.model.gen.User;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

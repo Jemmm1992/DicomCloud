@@ -1,7 +1,7 @@
-package com.sayeah.service;
+package com.sayeah.service.function;
 
 import com.sayeah.dao.DicomFileDAO;
-import com.sayeah.model.DicomFile;
+import com.sayeah.model.gen.DicomFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

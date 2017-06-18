@@ -1,6 +1,6 @@
 package com.sayeah.dao;
 
-import com.sayeah.model.User;
+import com.sayeah.model.gen.User;
 import org.apache.ibatis.annotations.*;
 
 /**
