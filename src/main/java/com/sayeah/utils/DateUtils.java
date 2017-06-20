@@ -14,7 +14,7 @@ public class DateUtils {
      * 字符串转化成日期类型
      */
     public static Date stringToDate(String s) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//小写的mm表示的是分钟
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");//小写的mm表示的是分钟
         Date date = null;
         try {
             date = sdf.parse(s);
@@ -28,7 +28,7 @@ public class DateUtils {
      * 日期转换成字符串
      */
     public static String dateToString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date d = new Date();
         String str = sdf.format(d);
         return str;

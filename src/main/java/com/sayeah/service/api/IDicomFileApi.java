@@ -7,7 +7,7 @@ import java.io.InputStream;
 /**
  * Created by BIG-JIAN on 2017/6/17.
  */
-public interface IFileApi {
+public interface IDicomFileApi {
     /**
      * 上传文件的API
      * @param inputStream
@@ -15,4 +15,8 @@ public interface IFileApi {
      * @return
      */
     ReturnMsgVo<Object> uploadFile(InputStream inputStream,String name);
+
+//    ReturnMsgVo<Object> test(InputStream inputStream, String name, long fileSize);
+
+
 }

@@ -19,7 +19,7 @@ public class IndexController {
 
     @RequestMapping(value = "index")
     public String index2() {
-        return "index";
+        return "commons";
     }
 
 

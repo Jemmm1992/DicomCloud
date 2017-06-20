@@ -23,7 +23,7 @@ public class StudyFile {
 
     String studyUid;
     String patientUid;
-    String studyFileSize;
+    long studyFileSize;
     Date createDate;
     int ishdfs;
 }

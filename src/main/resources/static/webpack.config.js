@@ -1,48 +1,93 @@
-var path = require('path');
+const path = require('path');
+const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const extractPlugin = new ExtractTextPlugin('[name].css');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
+    name: 'vendor',
+    filename: 'vendor.js'
+});
+
+const srcPath = path.resolve(__dirname, 'src');
+const buildPath = path.resolve(__dirname, 'assets');
 
 module.exports = {
     entry: './app.js', //entry为入口文件，即webpack以这个文件为基础打包成另一个文件，所以entry文件包括了要导入的文件
-    devtool: 'sourcemaps',
-    cache: true,
-    debug: true,
+    devtool: 'source-map',
     output: { //打包输出出bundle.js文件，这个文件就可以导入HTML中了
-        path: __dirname + '/assets',	// 打包文件存放的绝对路径
-		// publicPath:'/assets/',	// 网站运行时的访问路径
-        filename: '../static/bundle.js'	// 打包后的文件名
+        path: buildPath,	// 打包文件存放的绝对路径
+        filename: '[name].js', // 打包后的文件名
+        publicPath: '${contextPath}/static/<%=ConfigHelper.assetsDir%>/'
     },
 
-    resolve: {
-        modulesDirectories: ['node_modules', './src'],  // import时到哪些地方去寻找模块
-        extensions: ['', '.js', '.jsx'],  // require的时候可以直接使用require('file')，不用require('file.js')
-        alias: {
-            antdcss: 'antd/dist/antd.min.css',  // import时的别名
-        },
-    },
+    plugins: [
+        extractPlugin
+    ],
 
     module: {
-        loaders: [   // 定义各种loader
+        rules: [
+            // html
             {
-                test: /\.jsx?$/,
-                loaders: ['react-hot', 'babel-loader?' + JSON.stringify(babelLoaderConfig)],  // react-hot-loader可以不用刷新页面, 如果用普通的dev-server的话会自动刷新页面
-                exclude: /node_modules/,
-            }, {
+                test: /\.(cs)?htm(l?)$/,
+                loader: 'html-loader'
+            },
+            // 提取css
+            {
                 test: /\.css$/,
-                loader: 'style!css',
-            }, {
-                test: /\.less$/,
-                loader: 'style!css!' + `less?{"sourceMap":true,"modifyVars":${JSON.stringify(lessLoaderVars)}}`,  // 用!去链式调用loader
-            }, {
-                test: /\.(png|jpg|svg)$/,
-                loader: 'url?limit=25000',  // 图片小于一定值的话转成base64
-            }, {
-                test: path.join(__dirname, '.'),
-                exclude: /(node_modules)/,
-                loader: 'babel', //用babel转换JSX
-                query: {
-                    cacheDirectory: true,
-                    presets: ['es2015', 'react']
+                use: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
+            },
+
+            {
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader'
                 }
-            }
+            },
+            {
+                test: /\.scss$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'scss-loader'
+                ]
+            },
+
+            {
+                test: /\.less$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'less-loader'
+                ]
+            },
+
+            {
+                test: /\.(png|jpg|gif)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: '8192'
+                    }
+                }
+            },
+
+            {
+                test: /\.woff(2*)$/,
+                use: {
+                    loader: 'url-loader',
+                    options: {
+                        limit: '10000',
+                        minetype: 'application/font-woff'
+                    }
+                }
+            },
+            { test: /\.ttf$/, loader: 'file-loader' },
+            { test: /\.eot$/, loader: 'file-loader' },
+            { test: /\.svg$/, loader: 'file-loader' }
         ]
     }
 };

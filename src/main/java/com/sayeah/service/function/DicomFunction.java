@@ -1,23 +1,75 @@
 package com.sayeah.service.function;
 
+import com.sayeah.dao.DicomFileDAO;
+import com.sayeah.dao.StudyDAO;
 import com.sayeah.model.gen.DicomFile;
+import com.sayeah.model.gen.StudyFile;
 import com.sayeah.utils.DateUtils;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.io.DicomInputStream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by BIG-JIAN on 2017/6/18.
  */
+@Service
 public class DicomFunction {
+    @Autowired
+    StudyDAO studyDAO;
+
+    @Autowired
+    DicomFileDAO dicomFileDAO;
+
+
+
+    public void mappingStudyFile(String studyPath){
+        StudyFile studyFile = new StudyFile();
+        // TODO: 2017/6/18 插入用户名的id
+        studyFile.setUserId(1);
+        studyFile.setBigFileId(1);
+
+        File file = new File(studyPath);
+        studyFile.setFolderName(file.getName());
+
+        List<DicomFile> dicomFiles = TraversalStudy(studyPath);
+
+        if(dicomFiles!=null){
+            DicomFile dicomFile = dicomFiles.get(0);
+            studyFile.setStudyDate(dicomFile.getStudyDate());
+            studyFile.setModality(dicomFile.getModality());
+            studyFile.setStudyUid(dicomFile.getStudyUid());
+            studyFile.setPatientUid(dicomFile.getPatientUid());
+            studyFile.setStudyFileSize(0L);
+            studyFile.setCreateDate(new Date());
+            studyFile.setIshdfs(0);
+        }
+        String str = DateUtils.dateToString(studyFile.getStudyDate());
+        studyFile.setUrl(str+"_"+studyFile.getModality());
+        studyDAO.addStudyFile(studyFile);
+
+        //插入数据库后获取到主键ID
+        studyFile.getId();
+
+        for (DicomFile dicomFile:dicomFiles) {
+            dicomFile.setUserId(studyFile.getUserId());
+            dicomFile.setStudyFileId(studyFile.getId());
+            dicomFile.setCreatedDate(new Date());
+            dicomFileDAO.addDicomFile(dicomFile);
+        }
+    }
+
+
     /**
      * 遍历一次检查下的所有dicom文件
      */
-    public static List<DicomFile> TraversalStudy(String studyPath) {
+    public List<DicomFile> TraversalStudy(String studyPath) {
         File studyFile = new File(studyPath);
         List<DicomFile> list = new ArrayList<>();
         if (studyFile != null) {
@@ -33,7 +85,7 @@ public class DicomFunction {
     /**
      * 读取dcm文件,返回DicomFile对象，里面包含dcm文件的相关属性
      */
-    public static DicomFile getDicomFile(File file) {
+    public DicomFile getDicomFile(File file) {
         DicomFile dicomFile = new DicomFile();
         try {
             Attributes dcm = readAttributes(file);
@@ -53,7 +105,7 @@ public class DicomFunction {
         return dicomFile;
     }
 
-    public static DicomFile getDicomFile(InputStream inputStream, String fileName, long fileSize) {
+    public DicomFile getDicomFile(InputStream inputStream, String fileName, long fileSize) {
         DicomFile dicomFile = new DicomFile();
         try {
             Attributes dcm = readAttributes(inputStream);
@@ -74,14 +126,14 @@ public class DicomFunction {
     }
 
 
-    public static DicomFile getDicomFile(String filePath) {
+    public DicomFile getDicomFile(String filePath) {
         return getDicomFile(new File(filePath));
     }
 
     /**
      * 读取dcm文件，返回byte[]
      */
-    public static byte[] getBinaryFile(File file) {
+    public byte[] getBinaryFile(File file) {
         BufferedInputStream bf = null;
         try {
             bf = new BufferedInputStream(new FileInputStream(file));
@@ -100,14 +152,14 @@ public class DicomFunction {
         }
     }
 
-    public static byte[] readBinaryFile(String filePath) {
+    public byte[] readBinaryFile(String filePath) {
         return getBinaryFile(new File(filePath));
     }
 
     /**
      * 读取Dcm文件，并返回Attributes
      */
-    private static Attributes readAttributes(File file) throws IOException {
+    private Attributes readAttributes(File file) throws IOException {
         DicomInputStream in = new DicomInputStream(file);
         try {
             return in.readDataset(-1, -1);
@@ -116,7 +168,7 @@ public class DicomFunction {
         }
     }
 
-    private static Attributes readAttributes(InputStream inputStream) throws IOException {
+    private Attributes readAttributes(InputStream inputStream) throws IOException {
         DicomInputStream in = new DicomInputStream(inputStream);
         try {
             return in.readDataset(-1, -1);
